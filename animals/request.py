@@ -1,6 +1,3 @@
-import animals
-
-
 ANIMALS = [
     {
         "id": 1,
@@ -20,7 +17,7 @@ ANIMALS = [
 ]
 
 
-def get_all_animals(req):
+def get_all_animals():
     return ANIMALS
 
 def get_single_animal(id):
