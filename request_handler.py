@@ -1,5 +1,6 @@
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from animals import get_all_animals, get_single_animal
+from animals import get_all_animals, get_single_animal, create_animal
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -31,7 +32,6 @@ class HandleRequests(BaseHTTPRequestHandler):
         if resource == "animals":
             if id is not None:
                 response = f"{get_single_animal(id)}"
-
             else:
                 response = f"{get_all_animals()}"
 
@@ -40,11 +40,22 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_POST(self):
         '''Reads post request body'''
         self._set_headers()
-        print(self.path)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
-        response = f"received post request:<br>{post_body}"
-        self.wfile.write(response.encode())
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Initialize new animal
+        new_animal = None
+
+        # Add a new animal to the list
+        if resource == "animals":
+            new_animal = create_animal(post_body)
+
+        # Encode the new animal and send in response
+        self.wfile.write(f"{new_animal}".encode())
 
     def do_PUT(self):
         self.do_POST()
