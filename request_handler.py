@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from animals import get_all_animals, get_single_animal, create_animal
+from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -20,6 +20,16 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def _set_headers(self):
         self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+
+    def _set_not_found_headers(self):
+        self.send_response(404)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+
+    def _set_no_content_headers(self):
+        self.send_response(204)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
@@ -58,7 +68,42 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(f"{new_animal}".encode())
 
     def do_PUT(self):
-        self.do_POST()
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        success = False
+
+        if resource == "animals":
+            success = update_animal(id, post_body)
+
+        print(success)
+
+        if success:
+            self._set_no_content_headers()
+        else:
+            self._set_not_found_headers()
+
+        self.wfile.write("".encode())
+
+
+
+    def do_DELETE(self):
+        self._set_no_content_headers()
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            delete_animal(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
 
 def main():
