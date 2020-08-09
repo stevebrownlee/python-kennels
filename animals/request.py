@@ -1,43 +1,70 @@
-ANIMALS = [
-    {
-        "id": 1,
-        "name": "Snickers",
-        "species": "Dog",
-        "location": 1,
-        "customerId": 4,
-        "status": "Assessment"
-    },
-    {
-        "id": 2,
-        "name": "Gypsy",
-        "species": "Dog",
-        "location": 1,
-        "customerId": 2,
-        "status": "Recreation"
-    },
-    {
-        "id": 3,
-        "name": "Blue",
-        "species": "Cat",
-        "location": 2,
-        "customerId": 1,
-        "status": "Treatment"
-    }
-]
+import sqlite3
+import json
+from models import Animal
 
 
 def get_all_animals():
-    return ANIMALS
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        select
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.customer_id,
+            a.location_id
+        from animal a
+        """)
+
+        # Initialize an empty list to hold all animal representations
+        animals = []
+        dataset = db_cursor.fetchall()
+
+        # Iterate all rows of data returned from database
+        for row in dataset:
+
+            # Create an animal instance from the current row
+            animal = Animal(row['name'], row['breed'], row['status'],
+                            row['location_id'], row['customer_id'])
+            animal.id = row['id']
+
+            animals.append(animal.__dict__)
+
+    return json.dumps(animals)
 
 
 def get_single_animal(id):
-    requested_animal = None
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    for animal in ANIMALS:
-        if animal["id"] == id:
-            requested_animal = animal
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.customer_id,
+            a.location_id
+        FROM animal a
+        WHERE a.id = ?
+        """, (id, ))
 
-    return requested_animal
+        data = db_cursor.fetchone()
+
+        # Create an animal instance from the current row
+        animal = Animal(data['name'], data['breed'], data['status'],
+                        data['location_id'], data['customer_id'])
+        animal.id = data['id']
+
+        return json.dumps(animal.__dict__)
 
 
 def create_animal(animal):
@@ -46,39 +73,39 @@ def create_animal(animal):
     animal["id"] = new_id
     ANIMALS.append(animal)
 
-    return animal
+    return json.dumps(animal)
 
 
 def update_animal(id, new_animal):
-    # Initial -1 value for animal index, in case one isn't found
-    animal_index = -1
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
 
-    # Iterate the ANIMALS list, but use enumerate() so that you
-    # can access the index value of each item
-    for index, animal in enumerate(ANIMALS):
-        if animal["id"] == id:
-            # Found the animal. Update the value
-            animal_index = index
-            ANIMALS[index] = new_animal
-            break
+        db_cursor.execute("""
+        UPDATE Animal
+            SET
+                name = ?,
+                breed = ?,
+                status = ?,
+                location_id = ?,
+                customer_id = ?
+        WHERE id = ?
+        """, (new_animal['name'], new_animal['species'],
+              new_animal['status'], new_animal['location_id'],
+              new_animal['customer_id'], id, ))
 
-    if animal_index >= 0:
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    else:
         return True
-
-    return False
 
 
 def delete_animal(id):
-    # Initial -1 value for animal index, in case one isn't found
-    animal_index = -1
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
 
-    # Iterate the ANIMALS list, but use enumerate() so that you
-    # can access the index value of each item
-    for index, animal in enumerate(ANIMALS):
-        if animal["id"] == id:
-            # Found the animal. Store the current index.
-            animal_index = index
-
-    # If the animal was found, use pop(int) to remove it from list
-    if animal_index >= 0:
-        ANIMALS.pop(animal_index)
+        db_cursor.execute("""
+        DELETE FROM animal
+        WHERE id = ?
+        """, (id, ))

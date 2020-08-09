@@ -1,32 +1,35 @@
-import animals
+import sqlite3
+import json
+from models import Location
 
 
-ANIMALS = [
-    {
-        "id": 1,
-        "name": "Snickers",
-        "species": "Dog"
-    }
-]
+def get_all_locations():
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        select
+            l.id,
+            l.name,
+            l.address
+        from location l
+        """)
 
-def get_all_animals(req):
-    return ANIMALS
+        # Initialize an empty list to hold all location representations
+        locations = []
+        dataset = db_cursor.fetchall()
 
-def get_single_animal(id):
-    requested_animal = None
+        # Iterate all rows of data returned from database
+        for row in dataset:
 
-    for animal in ANIMALS:
-        if animal["id"] == id:
-            requested_animal = animal
+            # Create an location instance from the current row
+            location = Location(row['name'], row['address'])
+            location.id = row['id']
 
-    return requested_animal
+            locations.append(location.__dict__)
 
-def create_animal(req):
-    return ANIMALS
+    return json.dumps(locations)
 
-def update_animal(req):
-    return ANIMALS
-
-def delete_animal(req):
-    return ANIMALS
