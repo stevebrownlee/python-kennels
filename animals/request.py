@@ -1,3 +1,5 @@
+from models.customer import Customer
+from models.location import Location
 import sqlite3
 import json
 from models import Animal
@@ -11,14 +13,18 @@ def get_all_animals():
 
         # Write the SQL query to get the information you want
         db_cursor.execute("""
-        select
+        SELECT
             a.id,
             a.name,
             a.breed,
             a.status,
+            a.location_id,
             a.customer_id,
-            a.location_id
-        from animal a
+            l.name location_name,
+            l.address location_address
+        FROM Animal a
+        JOIN `Location` l
+            ON l.id = a.location_id
         """)
 
         # Initialize an empty list to hold all animal representations
@@ -30,8 +36,10 @@ def get_all_animals():
 
             # Create an animal instance from the current row
             animal = Animal(row['name'], row['breed'], row['status'],
-                            row['location_id'], row['customer_id'])
-            animal.id = row['id']
+                            row['location_id'], row['customer_id'], row['id'])
+
+            location = Location(row['location_name'], row['location_address'])
+            animal.location = location.__dict__
 
             animals.append(animal.__dict__)
 
@@ -67,13 +75,24 @@ def get_single_animal(id):
         return json.dumps(animal.__dict__)
 
 
-def create_animal(animal):
-    max_id = ANIMALS[-1]["id"]
-    new_id = max_id + 1
-    animal["id"] = new_id
-    ANIMALS.append(animal)
+def create_animal(new_animal):
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
 
-    return json.dumps(animal)
+        db_cursor.execute("""
+        INSERT INTO Animal
+            ( name, breed, status, location_id, customer_id )
+        VALUES
+            ( ?, ?, ?, ?, ?);
+        """, (new_animal['name'], new_animal['species'],
+              new_animal['status'], new_animal['location_id'],
+              new_animal['customer_id'], ))
+
+        id = db_cursor.lastrowid
+        new_animal['id'] = id
+
+
+    return json.dumps(new_animal)
 
 
 def update_animal(id, new_animal):
@@ -109,3 +128,4 @@ def delete_animal(id):
         DELETE FROM animal
         WHERE id = ?
         """, (id, ))
+

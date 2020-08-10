@@ -73,20 +73,16 @@ INSERT INTO `Animal` VALUES (null, "Daps", "Kennel", "Boxer", 2, 2);
 
 
 
-
-
-
-
-
-
 SELECT
-    c.name,
-    c.address,
-    c.email,
-    c.password
-FROM Customer c
-WHERE c.email = 'jenna@solis.com';
+    a.id,
+    a.name,
+    a.breed,
+    a.status,
+    a.location_id,
+    a.customer_id
+FROM Animal a
 
+;
 
 
 
