@@ -28,9 +28,8 @@ def get_all_customers():
         for row in dataset:
 
             # Create an customer instance from the current row
-            customer = Customer(row['name'], row['address'], row['email'],
+            customer = Customer(row['id'], row['name'], row['address'], row['email'],
                             row['password'])
-            customer.id = row['id']
 
             customers.append(customer.__dict__)
 
@@ -59,10 +58,7 @@ def get_customers_by_email(email):
         dataset = db_cursor.fetchall()
 
         for row in dataset:
-            customer = Customer(row['name'], row['address'], row['email'],
-                            row['password'])
-            customer.id = row['id']
-
+            customer = Customer(row['id'], row['name'], row['address'])
             customers.append(customer.__dict__)
 
     return json.dumps(customers)
