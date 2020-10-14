@@ -44,13 +44,13 @@ def get_customers_by_email(email):
 
         # Write the SQL query to get the information you want
         db_cursor.execute("""
-        select
+        SELECT
             c.id,
             c.name,
             c.address,
             c.email,
             c.password
-        from Customer c
+        FROM Customer c
         WHERE c.email = ?
         """, ( email, ))
 
@@ -58,7 +58,7 @@ def get_customers_by_email(email):
         dataset = db_cursor.fetchall()
 
         for row in dataset:
-            customer = Customer(row['id'], row['name'], row['address'])
+            customer = Customer(row['id'], row['name'], row['address'], "", row['password'])
             customers.append(customer.__dict__)
 
     return json.dumps(customers)
@@ -121,6 +121,5 @@ def delete_customer(id):
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        DELETE FROM Customer
-        WHERE id = ?
+        DELETE FROM Customer WHERE id = ?
         """, (id, ))

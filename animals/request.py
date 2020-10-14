@@ -56,21 +56,30 @@ def get_single_animal(id):
         db_cursor.execute("""
         SELECT
             a.id,
-            a.name,
+            a.name animal_name,
             a.breed,
             a.status,
             a.customer_id,
-            a.location_id
+            a.location_id,
+            c.name customer_name,
+            l.name location_name
         FROM animal a
+        JOIN Customer c ON c.id = a.customer_id
+        JOIN Location l ON l.id = a.location_id
         WHERE a.id = ?
         """, (id, ))
 
         data = db_cursor.fetchone()
 
         # Create an animal instance from the current row
-        animal = Animal(data['name'], data['breed'], data['status'],
-                        data['location_id'], data['customer_id'])
-        animal.id = data['id']
+        animal = Animal(data['animal_name'], data['breed'], data['status'],
+                        data['location_id'], data['customer_id'], data['id'])
+
+        location = Location(data['location_name'])
+        animal.location = location.__dict__
+
+        customer = Customer("", data['customer_name'], "")
+        animal.customer = customer.__dict__
 
         return json.dumps(animal.__dict__)
 
@@ -128,4 +137,11 @@ def delete_animal(id):
         DELETE FROM animal
         WHERE id = ?
         """, (id, ))
+
+        rows_affected = db_cursor.rowcount  # 0 or 1
+
+        if rows_affected == 0:
+            return False
+        else:
+            return True
 
