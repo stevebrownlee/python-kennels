@@ -62,11 +62,15 @@ INSERT INTO `Customer` VALUES (null, "Emily Lemmon", "454 Mulberry Way", "emily@
 
 
 
-INSERT INTO `Animal` VALUES (null, "Snickers", "Recreation", "Dalmation", 4, 1);
-INSERT INTO `Animal` VALUES (null, "Jax", "Treatment", "Beagle", 1, 1);
-INSERT INTO `Animal` VALUES (null, "Falafel", "Treatment", "Siamese", 4, 2);
-INSERT INTO `Animal` VALUES (null, "Doodles", "Kennel", "Poodle", 3, 1);
-INSERT INTO `Animal` VALUES (null, "Daps", "Kennel", "Boxer", 2, 2);
+INSERT INTO `Animal` VALUES (null, "Snickers", "Dalmation", "Recreation", 4, 1);
+INSERT INTO `Animal` VALUES (null, "Jax", "Beagle", "Treatment", 1, 1);
+INSERT INTO `Animal` VALUES (null, "Falafel", "Siamese", "Treatment", 4, 2);
+INSERT INTO `Animal` VALUES (null, "Doodles", "Poodle", "Kennel", 3, 1);
+INSERT INTO `Animal` VALUES (null, "Daps", "Boxer", "Kennel", 2, 2);
+
+DELETE FROM Animal;
+
+SELECT * FROM Animal;
 
 
 
@@ -107,7 +111,7 @@ JOIN `Location` l
 
 
 
-
+select * from Animal;
 
 SELECT
             a.id,

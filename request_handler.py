@@ -38,6 +38,14 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
 
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
+        self.end_headers()
+
+
     def do_GET(self):
         self._set_headers(200)
 

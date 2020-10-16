@@ -94,8 +94,8 @@ def create_animal(new_animal):
         VALUES
             ( ?, ?, ?, ?, ?);
         """, (new_animal['name'], new_animal['species'],
-              new_animal['status'], new_animal['location_id'],
-              new_animal['customer_id'], ))
+              new_animal['status'], new_animal['locationId'],
+              new_animal['customerId'], ))
 
         id = db_cursor.lastrowid
         new_animal['id'] = id
@@ -117,9 +117,9 @@ def update_animal(id, new_animal):
                 location_id = ?,
                 customer_id = ?
         WHERE id = ?
-        """, (new_animal['name'], new_animal['species'],
-              new_animal['status'], new_animal['location_id'],
-              new_animal['customer_id'], id, ))
+        """, (new_animal['name'], new_animal['breed'],
+              new_animal['status'], new_animal['locationId'],
+              new_animal['customerId'], id, ))
 
         rows_affected = db_cursor.rowcount
 
