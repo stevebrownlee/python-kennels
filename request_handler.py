@@ -82,7 +82,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_POST(self):
         '''Reads post request body'''
-        self._set_headers(200)
+        self._set_headers(201)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)

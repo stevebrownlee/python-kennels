@@ -68,61 +68,18 @@ INSERT INTO `Animal` VALUES (null, "Falafel", "Siamese", "Treatment", 4, 2);
 INSERT INTO `Animal` VALUES (null, "Doodles", "Poodle", "Kennel", 3, 1);
 INSERT INTO `Animal` VALUES (null, "Daps", "Boxer", "Kennel", 2, 2);
 
-DELETE FROM Animal;
-
-SELECT * FROM Animal;
-
-
-
-
-SELECT
-    a.id,
-    a.name,
-    a.breed,
-    a.status,
-    a.location_id,
-    a.customer_id,
-    l.name location_name,
-    l.address location_address
-FROM Animal a
-JOIN `Location` l
-    ON l.id = a.location_id
-;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 select * from Animal;
 
-SELECT
-            a.id,
-            a.name animal_name,
-            a.breed,
-            a.status,
-            a.customer_id,
-            a.location_id,
-            c.name customer_name,
-            l.name location_name
-        FROM animal a
-        JOIN Customer c ON c.id = a.customer_id
-        JOIN Location l ON l.id = a.location_id
-        WHERE a.id = 1;
+select
+    a.name,
+    a.breed,
+    a.status,
+    c.name customer_name,
+    l.name location_name
+from Animal a
+join Customer c on a.customer_id = c.id
+join Location l on a.location_id = l.id
+where a.id = 12
+;
+

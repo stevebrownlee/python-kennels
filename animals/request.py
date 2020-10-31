@@ -75,9 +75,11 @@ def get_single_animal(id):
         animal = Animal(data['animal_name'], data['breed'], data['status'],
                         data['location_id'], data['customer_id'], data['id'])
 
+        # Create a location instance
         location = Location(data['location_name'])
         animal.location = location.__dict__
 
+        # Create a customer instance
         customer = Customer("", data['customer_name'], "")
         animal.customer = customer.__dict__
 
@@ -93,7 +95,7 @@ def create_animal(new_animal):
             ( name, breed, status, location_id, customer_id )
         VALUES
             ( ?, ?, ?, ?, ?);
-        """, (new_animal['name'], new_animal['species'],
+        """, (new_animal['name'], new_animal['breed'],
               new_animal['status'], new_animal['locationId'],
               new_animal['customerId'], ))
 
