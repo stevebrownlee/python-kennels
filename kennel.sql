@@ -83,3 +83,5 @@ join Location l on a.location_id = l.id
 where a.id = 12
 ;
 
+
+select * from Customer;

@@ -63,6 +63,24 @@ def get_customers_by_email(email):
 
     return json.dumps(customers)
 
+def create_customer(customer):
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Customer
+            ( name, address, email, password )
+        VALUES
+            ( ?, ?, ?, ? );
+        """, (customer['name'], customer['address'],
+              customer['email'], customer['password'],)
+        )
+
+        id = db_cursor.lastrowid
+        customer['id'] = id
+
+
+    return json.dumps(customer)
 
 def get_single_customer(id):
     # Open a connection to the database

@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from locations.request import get_all_locations
-from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
+from animals import *
 from customers import *
 from locations import *
 
@@ -62,11 +62,16 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_all_animals()}"
             elif resource == "locations":
                 if id is not None:
-                    # response = f"{get_single_animal(id)}"
+                    response = f"{get_single_animal(id)}"
                     pass
                 else:
                     response = f"{get_all_locations()}"
             elif resource == "customers":
+                if id is not None:
+                    response = f"{get_single_customer(id)}"
+                else:
+                    response = f"{get_all_customers()}"
+            elif resource == "employees":
                 if id is not None:
                     response = f"{get_single_customer(id)}"
                 else:
@@ -76,7 +81,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             ( resource, key, value ) = parsed
 
             if key == "email" and resource == "customers":
-                response = get_customers_by_email(value)
+                response = f"{get_customers_by_email(value)}"
 
         self.wfile.write(response.encode())
 
@@ -95,6 +100,12 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Add a new animal to the list
         if resource == "animals":
+            new_animal = create_animal(post_body)
+        elif resource == "customers":
+            new_animal = create_customer(post_body)
+        elif resource == "locations":
+            new_animal = create_animal(post_body)
+        elif resource == "employees":
             new_animal = create_animal(post_body)
 
         # Encode the new animal and send in response
