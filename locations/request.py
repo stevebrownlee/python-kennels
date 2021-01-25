@@ -11,11 +11,11 @@ def get_all_locations():
 
         # Write the SQL query to get the information you want
         db_cursor.execute("""
-        select
+        SELECT
             l.id,
             l.name,
             l.address
-        from location l
+        FROM location l
         """)
 
         # Initialize an empty list to hold all location representations
