@@ -61,11 +61,15 @@ def get_single_animal(id):
             a.status,
             a.customer_id,
             a.location_id,
+            l.name location_name,
             c.name customer_name,
-            l.name location_name
+            c.id customer_id,
+            c.address
         FROM animal a
-        JOIN Customer c ON c.id = a.customer_id
-        JOIN Location l ON l.id = a.location_id
+        JOIN location l
+            ON l.id = a.location_id
+        JOIN customer c
+            ON c.id = a.customer_id
         WHERE a.id = ?
         """, (id, ))
 
@@ -75,12 +79,10 @@ def get_single_animal(id):
         animal = Animal(data['animal_name'], data['breed'], data['status'],
                         data['location_id'], data['customer_id'], data['id'])
 
-        # Create a location instance
         location = Location(data['location_name'])
         animal.location = location.__dict__
 
-        # Create a customer instance
-        customer = Customer("", data['customer_name'], "")
+        customer = Customer(data['customer_id'], data['customer_name'], data['address'])
         animal.customer = customer.__dict__
 
         return json.dumps(animal.__dict__)

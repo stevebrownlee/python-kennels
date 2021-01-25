@@ -89,15 +89,20 @@ select * from Customer;
 
 
 
-
-
-
-SELECT
-            c.id,
-            c.name,
-            c.address,
-            c.email,
-            c.password
-        FROM Customer c
-        WHERE c.email = 'jenna@solis.com'
-        ;
+        SELECT
+            a.id,
+            a.name animal_name,
+            a.breed,
+            a.status,
+            a.customer_id,
+            a.location_id,
+            l.name location_name,
+            c.name customer_name,
+            c.id customer_id,
+            c.address
+        FROM animal a
+        JOIN location l
+            ON l.id = a.location_id
+        JOIN customer c
+            ON c.id = a.customer_id
+        WHERE a.id = 9;
