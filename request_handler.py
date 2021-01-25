@@ -146,7 +146,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             if success:
                 self._set_headers(204) # SUCCESS, NO CONTENT
             else:
-                self._set_headers(404) # Resource doesn't exist
+                self._set_headers(404) # Resource doesn't exist 200, 201, 204, 401, 403, 404, 413, 500
 
         # Encode the new animal and send in response
         self.wfile.write("".encode())

@@ -119,9 +119,15 @@ def update_animal(id, new_animal):
                 location_id = ?,
                 customer_id = ?
         WHERE id = ?
-        """, (new_animal['name'], new_animal['breed'],
-              new_animal['status'], new_animal['locationId'],
-              new_animal['customerId'], id, ))
+        """, (
+                new_animal['name'],
+                new_animal['breed'],
+                new_animal['status'],
+                new_animal['locationId'],
+                new_animal['customerId'],
+                id,
+             )
+        )
 
         rows_affected = db_cursor.rowcount
 

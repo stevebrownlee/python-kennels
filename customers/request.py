@@ -48,7 +48,6 @@ def get_customers_by_email(email):
             c.id,
             c.name,
             c.address,
-            c.email,
             c.password
         FROM Customer c
         WHERE c.email = ?

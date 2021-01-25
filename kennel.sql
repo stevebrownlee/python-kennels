@@ -85,3 +85,19 @@ where a.id = 12
 
 
 select * from Customer;
+
+
+
+
+
+
+
+SELECT
+            c.id,
+            c.name,
+            c.address,
+            c.email,
+            c.password
+        FROM Customer c
+        WHERE c.email = 'jenna@solis.com'
+        ;
