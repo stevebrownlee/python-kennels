@@ -3,7 +3,7 @@ ANIMALS = [
         "id": 1,
         "name": "Snickers",
         "species": "Dog",
-        "location": 1,
+        "locationId": 1,
         "customerId": 4,
         "status": "Assessment"
     },
@@ -11,7 +11,7 @@ ANIMALS = [
         "id": 2,
         "name": "Gypsy",
         "species": "Dog",
-        "location": 1,
+        "locationId": 1,
         "customerId": 2,
         "status": "Recreation"
     },
@@ -19,7 +19,7 @@ ANIMALS = [
         "id": 3,
         "name": "Blue",
         "species": "Cat",
-        "location": 2,
+        "locationId": 2,
         "customerId": 1,
         "status": "Treatment"
     }
@@ -35,6 +35,7 @@ def get_single_animal(id):
 
     for animal in ANIMALS:
         if animal["id"] == id:
+
             requested_animal = animal
 
     return requested_animal

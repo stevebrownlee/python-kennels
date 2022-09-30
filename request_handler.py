@@ -1,6 +1,9 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
+from views import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
+from views import get_all_locations, get_single_location, create_location, delete_location, update_location
+from views import get_all_customers, get_single_customer, create_customer, delete_customer, update_customer
+from views import get_all_customers, get_single_customer, create_customer, delete_customer, update_customer
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -41,11 +44,11 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "animals":
             if id is not None:
-                response = f"{get_single_animal(id)}"
+                response = get_single_animal(id)
             else:
-                response = f"{get_all_animals()}"
+                response = get_all_animals()
 
-        self.wfile.write(response.encode())
+        self.wfile.write(json.dumps(response).encode())
 
     def do_POST(self):
         '''Reads post request body'''
@@ -65,7 +68,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_animal = create_animal(post_body)
 
         # Encode the new animal and send in response
-        self.wfile.write(f"{new_animal}".encode())
+        self.wfile.write(json.dumps(new_animal).encode())
 
     def do_PUT(self):
         content_len = int(self.headers.get('content-length', 0))
@@ -80,8 +83,6 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "animals":
             success = update_animal(id, post_body)
-
-        print(success)
 
         if success:
             self._set_no_content_headers()
@@ -110,3 +111,6 @@ def main():
     host = ''
     port = 8088
     HTTPServer((host, port), HandleRequests).serve_forever()
+
+if __name__ == "__main__":
+    main()
