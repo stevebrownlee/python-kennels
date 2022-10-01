@@ -1,3 +1,6 @@
+from .location_requests import get_single_location
+from .customer_requests import get_single_customer
+
 ANIMALS = [
     {
         "id": 1,
@@ -35,8 +38,11 @@ def get_single_animal(id):
 
     for animal in ANIMALS:
         if animal["id"] == id:
-
             requested_animal = animal
+            requested_animal["customer"] = get_single_customer(requested_animal['customerId'])
+            requested_animal["location"] = get_single_location(requested_animal['locationId'])
+            del requested_animal['locationId']
+            del requested_animal['customerId']
 
     return requested_animal
 
