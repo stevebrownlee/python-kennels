@@ -25,11 +25,24 @@ class HandleRequests(BaseHTTPRequestHandler):
                 self._set_headers(200)
                 response = get_all_animals()
 
+        elif resource == "customers":
+            if id is not None:
+                response = get_single_customer(id)
+
+                if response is not None:
+                    self._set_headers(200)
+                else:
+                    self._set_headers(404)
+                    response = { "message": f"Animal {id} is out playing right now" }
+            else:
+                self._set_headers(200)
+                response = get_all_customers()
+
+
         self.wfile.write(json.dumps(response).encode())
 
     def do_POST(self):
         '''Reads post request body'''
-        self._set_headers(200)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
@@ -38,14 +51,23 @@ class HandleRequests(BaseHTTPRequestHandler):
         (resource, id) = self.parse_url(self.path)
 
         # Initialize new animal
-        new_animal = None
+        created_resource = None
 
         # Add a new animal to the list
         if resource == "animals":
-            new_animal = create_animal(post_body)
+            created_resource = create_animal(post_body)
+        elif resource == "locations":
+            if "name" in post_body and "address" in post_body:
+                self._set_headers(201)
+                created_resource = create_location(post_body)
+            else:
+                self._set_headers(400)
+                created_resource = {
+                    "message": f'{"name is required" if "name" not in post_body else ""} {"address is required" if "address" not in post_body else ""}'
+                }
 
         # Encode the new animal and send in response
-        self.wfile.write(json.dumps(new_animal).encode())
+        self.wfile.write(json.dumps(created_resource).encode())
 
     def do_PUT(self):
         content_len = int(self.headers.get('content-length', 0))
@@ -71,17 +93,26 @@ class HandleRequests(BaseHTTPRequestHandler):
 
 
     def do_DELETE(self):
-        self._set_no_content_headers()
 
         # Parse the URL
         (resource, id) = self.parse_url(self.path)
 
+        response = ""
+
         # Delete a single animal from the list
         if resource == "animals":
+            self._set_headers(204)
             delete_animal(id)
 
+        elif resource == "customers":
+            self._set_headers(405)
+            response = {
+                "message": "Deleting customers requires contacting the company directly."
+            }
+
+
         # Encode the new animal and send in response
-        self.wfile.write("".encode())
+        self.wfile.write(json.dumps(response).encode())
 
     def parse_url(self, path):
         path_params = path.split("/")
