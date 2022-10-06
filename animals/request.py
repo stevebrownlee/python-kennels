@@ -5,14 +5,45 @@ import json
 from models import Animal
 
 
-def get_all_animals():
+def get_all_animals(query_params):
     # Open a connection to the database
     with sqlite3.connect("./kennel.db") as conn:
         conn.row_factory = sqlite3.Row
+        conn.set_trace_callback(print)
         db_cursor = conn.cursor()
 
+        sort_by = ""
+        where_clause = ""
+
+        if len(query_params) != 0:
+            param = query_params[0]
+            [qs_key, qs_value] = param.split("=")
+
+
+            if qs_key == "_sortBy":
+
+                if qs_value == 'location':
+                    sort_by = " ORDER BY location_id"
+                elif qs_value == 'customer':
+                    sort_by = " ORDER BY customer_id"
+                elif qs_value == 'name':
+                    sort_by = " ORDER BY a.name"
+                else:
+                    sort_by = qs_value
+            else:
+
+                if qs_key == "locationId":
+                    where_clause = f"WHERE a.location_id = {qs_value}"
+                elif qs_key == "customerId":
+                    where_clause = f"WHERE a.customer_id = {qs_value}"
+                else:
+                    where_clause = f"WHERE a.{qs_key} = '{qs_value}'"
+
+
+
+
         # Write the SQL query to get the information you want
-        db_cursor.execute("""
+        sql_to_execute = f"""
         SELECT
             a.id,
             a.name,
@@ -25,7 +56,11 @@ def get_all_animals():
         FROM Animal a
         JOIN `Location` l
             ON l.id = a.location_id
-        """)
+        {where_clause}
+        {sort_by}
+        """
+
+        db_cursor.execute(sql_to_execute)
 
         # Initialize an empty list to hold all animal representations
         animals = []
