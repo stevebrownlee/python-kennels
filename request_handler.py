@@ -5,6 +5,7 @@ from locations.request import get_all_locations
 from animals import *
 from customers import *
 from locations import *
+from employees import *
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -41,7 +42,6 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
-
     def do_GET(self):
         self._set_headers(200)
 
@@ -52,25 +52,32 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "animals":
             if id is not None:
-                response = f"{get_single_animal(id)}"
+                response = get_single_animal(id)
             else:
-                response = f"{get_all_animals(query_params)}"
+                response = get_all_animals(query_params)
         elif resource == "locations":
             if id is not None:
-                response = f"{get_single_animal(id)}"
+                response = get_single_animal(id)
                 pass
             else:
-                response = f"{get_all_locations()}"
+                response = get_all_locations()
         elif resource == "customers":
             if id is not None:
-                response = f"{get_single_customer(id)}"
+                response = get_single_customer(id)
             else:
-                response = f"{get_all_customers()}"
+                if len(query_params) > 0:
+                    param = query_params[0]
+                    (key, email_address) = param.split('=')
+                    response = get_customers_by_email(email_address)
+                else:
+                    response = get_all_customers()
         elif resource == "employees":
             if id is not None:
-                response = f"{get_single_customer(id)}"
+                response = get_single_employee(id)
             else:
-                response = f"{get_all_customers()}"
+
+                response = get_all_employees()
+
 
 
         self.wfile.write(response.encode())
@@ -121,8 +128,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             self._set_headers(404)
 
         self.wfile.write("".encode())
-
-
 
     def do_DELETE(self):
 

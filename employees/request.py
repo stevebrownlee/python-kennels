@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Employee
+from models import Employee, Animal
 
 
 def get_all_employees():
@@ -57,15 +57,35 @@ def get_single_employee(id):
 
         # Write the SQL query to get the information you want
         db_cursor.execute("""
-        select
+        SELECT
             e.id,
-            e.name
-        from employee e
+            e.name employee,
+            a.name animal,
+            a.id animal_id,
+            a.status,
+            a.breed,
+            a.location_id,
+            a.customer_id
+        FROM Employee e
+        LEFT JOIN EmployeeAnimal ea ON e.id = ea.employee_id
+        LEFT JOIN Animal a ON a.id = ea.animal_id
         WHERE e.id = ?
         """, (id,))
 
-        data = db_cursor.fetchone()
-        employee = Employee(data['id'], data['name'])
+        dataset = db_cursor.fetchall()
+        assigned_animals = []
+        employee = None
+
+        for row in dataset:
+            if employee is None:
+                employee = Employee(row['id'], row['employee'], '', '', [])
+
+            if row['animal'] is not None:
+                animal = Animal(row['animal'], row['breed'], row['status'], row['location_id'], row['customer_id'], row['animal_id'])
+                assigned_animals.append(animal.__dict__)
+
+        employee.animals = assigned_animals
+
         return json.dumps(employee.__dict__)
 
 

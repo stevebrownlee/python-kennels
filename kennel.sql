@@ -34,6 +34,14 @@ CREATE TABLE `Animal` (
 	FOREIGN KEY(`location_id`) REFERENCES `Location`(`id`)
 );
 
+CREATE TABLE `EmployeeAnimal` (
+	`id`  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	`animal_id`  TEXT NOT NULL,
+	`employee_id` TEXT NOT NULL,
+	FOREIGN KEY(`animal_id`) REFERENCES `Animal`(`id`),
+	FOREIGN KEY(`employee_id`) REFERENCES `Employee`(`id`)
+);
+
 
 CREATE TABLE `Employee` (
 	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -43,6 +51,14 @@ CREATE TABLE `Employee` (
 	FOREIGN KEY(`location_id`) REFERENCES `Location`(`id`)
 
 );
+
+INSERT INTO `EmployeeAnimal` VALUES (null, 1, 2);
+INSERT INTO `EmployeeAnimal` VALUES (null, 4, 1);
+INSERT INTO `EmployeeAnimal` VALUES (null, 3, 1);
+INSERT INTO `EmployeeAnimal` VALUES (null, 5, 3);
+INSERT INTO `EmployeeAnimal` VALUES (null, 3, 4);
+INSERT INTO `EmployeeAnimal` VALUES (null, 2, 4);
+
 
 INSERT INTO `Location` VALUES (null, 'Nashville North', "64 Washington Heights");
 INSERT INTO `Location` VALUES (null, 'Nashville South', "101 Penn Ave");
@@ -69,56 +85,42 @@ INSERT INTO `Animal` VALUES (null, "Doodles", "Poodle", "Kennel", 3, 1);
 INSERT INTO `Animal` VALUES (null, "Daps", "Boxer", "Kennel", 2, 2);
 
 
+
+select * from EmployeeAnimal;
+delete from EmployeeAnimal where id =3;
 select * from Animal;
-select * from Location;
-
-select
-    a.name,
-    a.breed,
-    a.status,
-    c.name customer_name,
-    l.name location_name
-from Animal a
-join Customer c on a.customer_id = c.id
-join Location l on a.location_id = l.id
-where a.id = 12
-;
-
-
-select * from Customer;
-
-
-
-
-        SELECT
-            a.id,
-            a.name animal_name,
-            a.breed,
-            a.status,
-            a.customer_id,
-            a.location_id,
-            l.name location_name,
-            c.name customer_name,
-            c.id customer_id,
-            c.address
-        FROM animal a
-        JOIN location l
-            ON l.id = a.location_id
-        JOIN customer c
-            ON c.id = a.customer_id
-        WHERE a.id = 9;
 
 
 
 SELECT
-            a.id,
-            a.name,
-            a.breed,
-            a.status,
-            a.location_id locationId,
-            a.customer_id,
-            l.name location_name,
-            l.address location_address
-        FROM Animal a
-        JOIN `Location` l ON l.id = a.location_id
-        ORDER BY locationId;
+    l.id,
+    l.name,
+    l.address,
+    COUNT(a.id) animals
+FROM location l
+JOIN animal a ON a.location_id = l.id
+GROUP BY a.location_id
+;
+
+SELECT
+	e.id,
+	e.name employee,
+	a.name animal,
+	a.id animal_id,
+	a.status,
+	a.breed,
+	a.location_id,
+	a.customer_id
+FROM Employee e
+LEFT JOIN EmployeeAnimal ea ON e.id = ea.employee_id
+LEFT JOIN Animal a ON a.id = ea.animal_id
+WHERE e.id = 3
+;
+
+
+
+
+
+
+
+

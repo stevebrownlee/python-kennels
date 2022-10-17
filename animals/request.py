@@ -30,14 +30,15 @@ def get_all_animals(query_params):
                     sort_by = " ORDER BY a.name"
                 else:
                     sort_by = qs_value
-            else:
 
-                if qs_key == "locationId":
-                    where_clause = f"WHERE a.location_id = {qs_value}"
-                elif qs_key == "customerId":
-                    where_clause = f"WHERE a.customer_id = {qs_value}"
-                else:
-                    where_clause = f"WHERE a.{qs_key} = '{qs_value}'"
+            elif qs_key == "locationId":
+                where_clause = f"WHERE a.location_id = {qs_value}"
+
+            elif qs_key == "customerId":
+                where_clause = f"WHERE a.customer_id = {qs_value}"
+
+            else:
+                where_clause = f"WHERE a.{qs_key} = '{qs_value}'"
 
 
 
@@ -52,10 +53,16 @@ def get_all_animals(query_params):
             a.location_id,
             a.customer_id,
             l.name location_name,
-            l.address location_address
+            l.address location_address,
+            c.name owner,
+            c.id customer_id,
+            c.address customer_address,
+            c.email
         FROM Animal a
         JOIN `Location` l
             ON l.id = a.location_id
+        JOIN `Customer` c
+            ON c.id = a.customer_id
         {where_clause}
         {sort_by}
         """
@@ -75,6 +82,9 @@ def get_all_animals(query_params):
 
             location = Location(row['location_name'], row['location_address'])
             animal.location = location.__dict__
+
+            customer = Customer(row['customer_id'], row['owner'], row['customer_address'], row['email'])
+            animal.customer = customer.__dict__
 
             animals.append(animal.__dict__)
 
